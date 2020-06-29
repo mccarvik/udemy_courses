@@ -1,0 +1,2 @@
+- to convert from jupter ipynb to py:
+    cmd: jupyter nbconvert --to script [name of script]
