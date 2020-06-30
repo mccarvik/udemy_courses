@@ -12,88 +12,29 @@
 # 
 # You can easily perform array with array arithmetic, or scalar with array arithmetic. Let's see some examples:
 
-# In[1]:
-
-
 import numpy as np
 arr = np.arange(0,10)
-
-
-# In[2]:
-
-
-arr + arr
-
-
-# In[3]:
-
-
-arr * arr
-
-
-# In[4]:
-
-
-arr - arr
-
-
-# In[5]:
-
+print(arr + arr)
+print(arr * arr)
+print(arr - arr)
 
 # Warning on division by zero, but not an error!
 # Just replaced with nan
-arr/arr
-
-
-# In[6]:
-
+print(arr/arr)
 
 # Also warning, but not an error instead infinity
-1/arr
-
-
-# In[10]:
-
-
-arr**3
-
+print(1/arr)
+print(arr**3)
 
 # ## Universal Array Functions
 # 
 # Numpy comes with many [universal array functions](http://docs.scipy.org/doc/numpy/reference/ufuncs.html), which are essentially just mathematical operations you can use to perform the operation across the array. Let's show some common ones:
-
-# In[12]:
-
-
 #Taking Square Roots
-np.sqrt(arr)
-
-
-# In[13]:
-
+print(np.sqrt(arr))
 
 #Calcualting exponential (e^)
-np.exp(arr)
+print(np.exp(arr))
 
-
-# In[14]:
-
-
-np.max(arr) #same as arr.max()
-
-
-# In[15]:
-
-
-np.sin(arr)
-
-
-# In[16]:
-
-
-np.log(arr)
-
-
-# # Great Job!
-# 
-# That's all we need to know for now!
+print(np.max(arr)) #same as arr.max()
+print(np.sin(arr))
+print(np.log(arr))
