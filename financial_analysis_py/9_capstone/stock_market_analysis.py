@@ -207,7 +207,7 @@ ax.xaxis.set_major_formatter(weekFormatter)
 mpf.plot(ford.dropna(), type='candle', style='charles')
 plt.savefig(PATH + 'candle.png', dpi=300)
 plt.close()
-sys.exit()
+
 # ____
 # # Part 3: Basic Financial Analysis
 # 
@@ -245,122 +245,86 @@ sys.exit()
 
 # Method 1: Using shift
 tesla['returns'] = (tesla['Close'] / tesla['Close'].shift(1) ) - 1
-
-
-# In[31]:
-
-
-tesla.head()
-
-
-# In[32]:
-
-
+print(tesla.head())
 tesla['returns'] = tesla['Close'].pct_change(1)
-
-
-# In[33]:
-
-
-tesla.head()
-
-
-# In[34]:
-
+print(tesla.head())
 
 # Now repeat for the other dataframes
 ford['returns'] = ford['Close'].pct_change(1)
 gm['returns'] = gm['Close'].pct_change(1)
+print(ford.head())
+print(gm.head())
 
-
-# In[35]:
-
-
-ford.head()
-
-
-# In[36]:
-
-
-gm.head()
-
-
-# ** Now plot a histogram of each companies returns. Either do them separately, or stack them on top of each other. Which stock is the most "volatile"? (as judged by the variance in the daily returns we will discuss volatility in a lot more detail in future lectures.)**
-
-# In[37]:
-
-
+# ** Now plot a histogram of each companies returns. Either do them separately, 
+# or stack them on top of each other. Which stock is the most "volatile"? (as 
+# judged by the variance in the daily returns we will discuss volatility in a 
+# lot more detail in future lectures.)**
 ford['returns'].hist(bins=50)
-
-
-# In[38]:
-
-
+plt.savefig(PATH + 'ford_ret_hist.png', dpi=300)
+plt.close()
 gm['returns'].hist(bins=50)
-
-
-# In[39]:
-
-
+plt.savefig(PATH + 'gm_ret_hist.png', dpi=300)
+plt.close()
 tesla['returns'].hist(bins=50)
-
-
-# In[40]:
-
+plt.savefig(PATH + 'tsla_ret_hist.png', dpi=300)
+plt.close()
 
 tesla['returns'].hist(bins=100,label='Tesla',figsize=(10,8),alpha=0.5)
 gm['returns'].hist(bins=100,label='GM',alpha=0.5)
 ford['returns'].hist(bins=100,label='Ford',alpha=0.5)
 plt.legend()
+plt.savefig(PATH + 'hist_stacked.png', dpi=300)
+plt.close()
 
-
-# ** Try also plotting a KDE instead of histograms for another view point. Which stock has the widest plot? **
-
-# In[41]:
-
-
+# ** Try also plotting a KDE instead of histograms for another view point. Which 
+# stock has the widest plot? **
 tesla['returns'].plot(kind='kde',label='Tesla',figsize=(12,6))
 gm['returns'].plot(kind='kde',label='GM')
 ford['returns'].plot(kind='kde',label='Ford')
 plt.legend()
-
+plt.savefig(PATH + 'kde.png', dpi=300)
+plt.close()
 
 # ** Try also creating some box plots comparing the returns. **
-
-# In[42]:
-
-
 box_df = pd.concat([tesla['returns'],gm['returns'],ford['returns']],axis=1)
 box_df.columns = ['Tesla Returns',' GM Returns','Ford Returns']
 box_df.plot(kind='box',figsize=(8,11),colormap='jet')
-
+plt.savefig(PATH + 'box.png', dpi=300)
+plt.close()
 
 # ## Comparing Daily Returns between Stocks
 # 
-# ** Create a scatter matrix plot to see the correlation between each of the stocks daily returns. This helps answer the questions of how related the car companies are. Is Tesla begin treated more as a technology company rather than a car company by the market?**
+# ** Create a scatter matrix plot to see the correlation between each of the 
+# stocks daily returns. This helps answer the questions of how related the car 
+# companies are. Is Tesla begin treated more as a technology company rather than 
+# a car company by the market?**
+scatter_matrix(box_df,alpha=0.2,hist_kwds={'bins':50});
+plt.savefig(PATH + 'scatter.png', dpi=300)
+plt.close()
 
-# In[43]:
-
-
-scatter_matrix(box_df,figsize=(8,8),alpha=0.2,hist_kwds={'bins':50});
-
-
-# ** It looks like Ford and GM do have some sort of possible relationship, let's plot just these two against eachother in scatter plot to view this more closely!**
-
-# In[44]:
-
-
+# ** It looks like Ford and GM do have some sort of possible relationship, 
+# let's plot just these two against eachother in scatter plot to view this more
+# closely!**
 box_df.plot(kind='scatter',x=' GM Returns',y='Ford Returns',alpha=0.4,figsize=(10,8))
-
+plt.savefig(PATH + 'box_2.png', dpi=300)
+plt.close()
 
 # ____
 # ## Cumulative Daily Returns
 # 
-# Great! Now we can see which stock was the most wide ranging in daily returns (you should have realized it was Tesla, our original stock price plot should have also made that obvious).
+# Great! Now we can see which stock was the most wide ranging in daily returns 
+# (you should have realized it was Tesla, our original stock price plot should 
+# have also made that obvious).
 # 
-# With daily cumulative returns, the question we are trying to answer is the following, if I invested $1 in the company at the beginning of the time series, how much would is be worth today? This is different than just the stock price at the current day, because it will take into account the daily returns. Keep in mind, our simple calculation here won't take into account stocks that give back a dividend. Let's look at some simple examples:
+# With daily cumulative returns, the question we are trying to answer is the 
+# following, if I invested $1 in the company at the beginning of the time series,
+# how much would is be worth today? This is different than just the stock price 
+# at the current day, because it will take into account the daily returns.
+# Keep in mind, our simple calculation here won't take into account stocks that
+# give back a dividend. Let's look at some simple examples:
 
-# Lets us say there is a stock 'ABC' that is being actively traded on an exchange. ABC has the following prices corresponding to the dates given
+# Lets us say there is a stock 'ABC' that is being actively traded on an 
+# exchange. ABC has the following prices corresponding to the dates given
 
 #     Date                        Price
 #     01/01/2018                   10
@@ -368,7 +332,12 @@ box_df.plot(kind='scatter',x=' GM Returns',y='Ford Returns',alpha=0.4,figsize=(1
 #     01/03/2018                   20
 #     01/04/2018                   25
 
-# **Daily Return** : Daily return is the profit/loss made by the stock compared to the previous day. (This is what ew just calculated above). A value above one indicates profit, similarly a value below one indicates loss. It is also expressed in percentage to convey the information better. (When expressed as percentage, if the value is above 0, the stock had give you profit else loss). So for the above example the daily returns would be
+# **Daily Return** : Daily return is the profit/loss made by the stock compared 
+# to the previous day. (This is what ew just calculated above). A value above 
+# one indicates profit, similarly a value below one indicates loss. It is also 
+# expressed in percentage to convey the information better. (When expressed as 
+# percentage, if the value is above 0, the stock had give you profit else loss). 
+# So for the above example the daily returns would be
 
 #     Date                         Daily Return                  %Daily Return
 #     01/01/2018                 10/10 =  1                          -   
@@ -376,7 +345,12 @@ box_df.plot(kind='scatter',x=' GM Returns',y='Ford Returns',alpha=0.4,figsize=(1
 #     01/03/2018                 20/15 =  4/3                       33%
 #     01/04/2018                 25/20 =  5/4                       20%
 
-# **Cumulative Return**: While daily returns are useful, it doesn't give the investor a immediate insight into the gains he had made till date, especially if the stock is very volatile. Cumulative return is computed relative to the day investment is made.  If cumulative return is above one, you are making profits else you are in loss. So for the above example cumulative gains are as follows
+# **Cumulative Return**: While daily returns are useful, it doesn't give the 
+# investor a immediate insight into the gains he had made till date, especially
+# if the stock is very volatile. Cumulative return is computed relative to the
+# day investment is made.  If cumulative return is above one, you are making 
+# profits else you are in loss. So for the above example cumulative gains are
+# as follows
 
 #     Date                       Cumulative Return         %Cumulative Return
 #     01/01/2018                  10/10 =  1                         100 %   
@@ -388,43 +362,27 @@ box_df.plot(kind='scatter',x=' GM Returns',y='Ford Returns',alpha=0.4,figsize=(1
 # 
 # $ i_i = (1+r_t) * i_{t-1} $
 # 
-# Here we can see we are just multiplying our previous investment at i at t-1 by 1+our percent returns. Pandas makes this very simple to calculate with its cumprod() method. Using something in the following manner:
+# Here we can see we are just multiplying our previous investment at i at t-1 by
+# 1+our percent returns. Pandas makes this very simple to calculate with its 
+# cumprod() method. Using something in the following manner:
 # 
 #     df[daily_cumulative_return] = ( 1 + df[pct_daily_return] ).cumprod()
 #     
 
 # ** Create a cumulative daily return column for each car company's dataframe.**
-
-# In[45]:
-
-
 tesla['Cumulative Return'] = (1 + tesla['returns']).cumprod()
-
-
-# In[46]:
-
-
-tesla.head()
-
-
-# In[47]:
-
-
+print(tesla.head())
 ford['Cumulative Return'] = (1 + ford['returns']).cumprod()
 gm['Cumulative Return'] = (1 + gm['returns']).cumprod()
 
 
-# ** Now plot the Cumulative Return columns against the time series index. Which stock showed the highest return for a $1 invested? Which showed the lowest?**
-
-# In[48]:
-
-
+# ** Now plot the Cumulative Return columns against the time series index. Which 
+# stock showed the highest return for a $1 invested? Which showed the lowest?**
 tesla['Cumulative Return'].plot(label='Tesla',figsize=(16,8),title='Cumulative Return')
 ford['Cumulative Return'].plot(label='Ford')
 gm['Cumulative Return'].plot(label='GM')
 plt.legend()
-
+plt.savefig(PATH + 'cum_ret.png', dpi=300)
+plt.close()
 
 # # Great Job!
-# 
-# That is it for thsi very basic analysis, this concludes this half of the course, which focuses much more on learning the tools of the trade. The second half of the course is where we really dive into functionality designed for time series, quantitative analysis, algorithmic trading, and much more!
