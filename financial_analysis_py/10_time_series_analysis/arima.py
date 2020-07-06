@@ -276,11 +276,9 @@ plt.close()
 # Check out this [link](http://www.itl.nist.gov/div898/handbook/pmc/section4/pmc4463.htm) for full details on this.
 
 # We can then plot this relationship:
-pdb.set_trace()
 result = plot_pacf(df["Seasonal First Difference"].dropna(), method='ywmle')
 plt.savefig(PATH + 'milk_pacf.png', dpi=300)
 plt.close()
-sys.exit()
 
 # ### Interpretation
 # 
@@ -313,77 +311,46 @@ ax1 = fig.add_subplot(211)
 fig = sm.graphics.tsa.plot_acf(df['Seasonal First Difference'].iloc[13:], lags=40, ax=ax1)
 ax2 = fig.add_subplot(212)
 fig = sm.graphics.tsa.plot_pacf(df['Seasonal First Difference'].iloc[13:], lags=40, ax=ax2)
-
+plt.savefig(PATH + 'milk_pacf_acf.png', dpi=300)
+plt.close()
 
 # ## Using the Seasonal ARIMA model
 # 
 # Finally we can use our ARIMA model now that we have an understanding of our data!
-
-# In[38]:
-
-
 # For non-seasonal data
 from statsmodels.tsa.arima_model import ARIMA
-
-
-# In[39]:
-
-
 # I recommend you glance over this!
-
 # 
-help(ARIMA)
-
-
+# help(ARIMA)
 # ### p,d,q parameters
 # 
 # * p: The number of lag observations included in the model.
 # * d: The number of times that the raw observations are differenced, also called the degree of differencing.
 # * q: The size of the moving average window, also called the order of moving average.
-
-# In[55]:
-
-
 # We have seasonal data!
 model = sm.tsa.statespace.SARIMAX(df['Milk in pounds per cow'],order=(0,1,0), seasonal_order=(1,1,1,12))
 results = model.fit()
 print(results.summary())
 
-
-# In[41]:
-
-
 results.resid.plot()
-
-
-# In[42]:
-
+plt.savefig(PATH + 'milk_resid.png', dpi=300)
+plt.close()
 
 results.resid.plot(kind='kde')
-
+plt.savefig(PATH + 'milk_kde.png', dpi=300)
+plt.close()
 
 # ## Prediction of Future Values
 # 
 # Firts we can get an idea of how well our model performs by just predicting for values that we actually already know:
-
-# In[43]:
-
-
 df['forecast'] = results.predict(start = 150, end= 168, dynamic= True)  
 df[['Milk in pounds per cow','forecast']].plot(figsize=(12,8))
-
+plt.savefig(PATH + 'milk_predict.png', dpi=300)
+plt.close()
 
 # ### Forecasting
 # This requires more time periods, so let's create them with pandas onto our original dataframe!
-
-# In[44]:
-
-
 print(df.tail())
-
-
-# In[45]:
-
 
 # https://pandas.pydata.org/pandas-docs/stable/timeseries.html
 # Alternatives 
@@ -393,9 +360,10 @@ future_dates = [df.index[-1] + DateOffset(months=x) for x in range(0,24) ]
 print(future_dates)
 future_dates_df = pd.DataFrame(index=future_dates[1:],columns=df.columns)
 future_df = pd.concat([df,future_dates_df])
-
 print(future_df.head())
 print(future_df.tail())
 
 future_df['forecast'] = results.predict(start = 168, end = 188, dynamic= True)  
 future_df[['Milk in pounds per cow', 'forecast']].plot(figsize=(12, 8)) 
+plt.savefig(PATH + 'milk_predict_future.png', dpi=300)
+plt.close()
