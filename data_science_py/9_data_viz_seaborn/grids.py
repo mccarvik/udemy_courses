@@ -8,48 +8,30 @@
 
 # # Grids
 # 
-# Grids are general types of plots that allow you to map plot types to rows and columns of a grid, this helps you create similar plots separated by features.
-
-# In[22]:
-
-
+# Grids are general types of plots that allow you to map plot types to rows 
+# and columns of a grid, this helps you create similar plots separated by features.
+import pdb, sys
 import seaborn as sns
+import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
-get_ipython().run_line_magic('matplotlib', 'inline')
-
-
-# In[27]:
-
-
+PATH = '/home/ec2-user/environment/udemy_courses/data_science_py/9_data_viz_seaborn/figs/'
 iris = sns.load_dataset('iris')
-
-
-# In[28]:
-
-
-iris.head()
-
+print(iris.head())
 
 # ## PairGrid
 # 
 # Pairgrid is a subplot grid for plotting pairwise relationships in a dataset.
-
-# In[25]:
-
-
 # Just the Grid
 sns.PairGrid(iris)
-
-
-# In[26]:
-
+plt.savefig(PATH + 'pairgrid1.png', dpi=300)
+plt.close()
 
 # Then you map to the grid
 g = sns.PairGrid(iris)
 g.map(plt.scatter)
-
-
-# In[30]:
+plt.savefig(PATH + 'pairgrid2.png', dpi=300)
+plt.close()
 
 
 # Map to upper,lower, and diagonal
@@ -57,78 +39,54 @@ g = sns.PairGrid(iris)
 g.map_diag(plt.hist)
 g.map_upper(plt.scatter)
 g.map_lower(sns.kdeplot)
-
+plt.savefig(PATH + 'pairgrid3.png', dpi=300)
+plt.close()
 
 # ## pairplot
 # 
 # pairplot is a simpler version of PairGrid (you'll use quite often)
-
-# In[31]:
-
-
 sns.pairplot(iris)
-
-
-# In[33]:
-
-
 sns.pairplot(iris,hue='species',palette='rainbow')
+plt.savefig(PATH + 'pairplot1.png', dpi=300)
+plt.close()
 
 
 # ## Facet Grid
 # 
 # FacetGrid is the general way to create grids of plots based off of a feature:
-
-# In[34]:
-
-
 tips = sns.load_dataset('tips')
-
-
-# In[35]:
-
-
-tips.head()
-
-
-# In[36]:
-
+print(tips.head())
 
 # Just the Grid
 g = sns.FacetGrid(tips, col="time", row="smoker")
-
-
-# In[37]:
-
+plt.savefig(PATH + 'facet_grid.png', dpi=300)
+plt.close()
 
 g = sns.FacetGrid(tips, col="time",  row="smoker")
 g = g.map(plt.hist, "total_bill")
-
-
-# In[42]:
+plt.savefig(PATH + 'facet_grid_smoker.png', dpi=300)
+plt.close()
 
 
 g = sns.FacetGrid(tips, col="time",  row="smoker",hue='sex')
 # Notice hwo the arguments come after plt.scatter call
 g = g.map(plt.scatter, "total_bill", "tip").add_legend()
+plt.savefig(PATH + 'facet_grid_hue.png', dpi=300)
+plt.close()
 
 
 # ## JointGrid
 # 
 # JointGrid is the general version for jointplot() type grids, for a quick example:
-
-# In[43]:
-
-
 g = sns.JointGrid(x="total_bill", y="tip", data=tips)
-
-
-# In[45]:
+plt.savefig(PATH + 'joint_grid.png', dpi=300)
+plt.close()
 
 
 g = sns.JointGrid(x="total_bill", y="tip", data=tips)
 g = g.plot(sns.regplot, sns.distplot)
-
-
-# Reference the documentation as necessary for grid types, but most of the time you'll just use the easier plots discussed earlier.
+plt.savefig(PATH + 'joint_grid_tips.png', dpi=300)
+plt.close()
+# Reference the documentation as necessary for grid types, but most of the time
+# you'll just use the easier plots discussed earlier.
 # # Great Job!
