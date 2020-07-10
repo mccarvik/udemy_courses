@@ -78,26 +78,14 @@ def record_vars(context,data):
     record(Leverage = context.account.leverage)
     record(Exposure = context.account.net_leverage)
 
-
-# In[15]:
-
-
 bt = get_backtest('5986bd68ceda5554428a005b')
-
-
-# In[16]:
-
-
 bt.recorded_vars['Leverage'].plot()
-
+plt.savefig(PATH + 'leverage.png', dpi=300)
+plt.close()
 
 # ## Set Hard Limit on Leverage
 # 
 # http://www.zipline.io/appendix.html?highlight=leverage#zipline.api.set_max_leverage
-
-# In[ ]:
-
-
 def initialize(context):
     context.amzn = sid(16841)
     context.ibm = sid(3766)
