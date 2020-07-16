@@ -51,142 +51,60 @@ y = df['price'].values
 
 # Split
 X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.3,random_state=42)
-
-
-# In[8]:
-
-
-X_train.shape
-
-
-# In[9]:
-
-
-X_test.shape
-
-
-# In[10]:
-
-
-y_train.shape
-
-
-# In[11]:
-
-
-y_test.shape
-
+print(X_train.shape)
+print(X_test.shape)
+print(y_train.shape)
+print(y_test.shape)
 
 # ## Normalizing/Scaling the Data
 # 
 # We scale the feature data.
 # 
 # [Why we don't need to scale the label](https://stats.stackexchange.com/questions/111467/is-it-necessary-to-scale-the-target-value-in-addition-to-scaling-features-for-re)
-
-# In[12]:
-
-
 from sklearn.preprocessing import MinMaxScaler
-
-
-# In[13]:
-
-
 help(MinMaxScaler)
-
-
-# In[14]:
-
-
 scaler = MinMaxScaler()
 
-
-# In[15]:
-
-
 # Notice to prevent data leakage from the test set, we only fit our scaler to the training set
-
-
-# In[16]:
-
-
 scaler.fit(X_train)
-
-
-# In[17]:
-
-
 X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
-
 
 # # TensorFlow 2.0 Syntax
 # 
 # 
 # ## Import Options
 # 
-# There are several ways you can import Keras from Tensorflow (this is hugely a personal style choice, please use any import methods you prefer). We will use the method shown in the **official TF documentation**.
-
-# In[18]:
-
-
+# There are several ways you can import Keras from Tensorflow (this is hugely a
+# personal style choice, please use any import methods you prefer). We will use 
+# the method shown in the **official TF documentation**.
 import tensorflow as tf
-
-
-# In[19]:
-
-
 from tensorflow.keras.models import Sequential
-
-
-# In[20]:
-
-
 help(Sequential)
-
 
 # ## Creating a Model
 # 
-# There are two ways to create models through the TF 2 Keras API, either pass in a list of layers all at once, or add them one by one.
+# There are two ways to create models through the TF 2 Keras API, either pass in 
+# a list of layers all at once, or add them one by one.
 # 
 # Let's show both methods (its up to you to choose which method you prefer).
-
-# In[21]:
-
-
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Activation
 
-
 # ### Model - as a list of layers
-
-# In[22]:
-
-
 model = Sequential([
     Dense(units=2),
     Dense(units=2),
     Dense(units=2)
 ])
 
-
 # ### Model - adding in layers one by one
-
-# In[23]:
-
-
 model = Sequential()
-
 model.add(Dense(2))
 model.add(Dense(2))
 model.add(Dense(2))
-
 
 # Let's go ahead and build a simple model and then compile it by defining our solver
-
-# In[24]:
-
-
 model = Sequential()
 
 model.add(Dense(4,activation='relu'))
@@ -195,9 +113,7 @@ model.add(Dense(4,activation='relu'))
 
 # Final output node for prediction
 model.add(Dense(1))
-
 model.compile(optimizer='rmsprop',loss='mse')
-
 
 # ### Choosing an optimizer and loss
 # 
@@ -224,229 +140,91 @@ model.compile(optimizer='rmsprop',loss='mse')
 # * Sample: one element of a dataset.
 #     * Example: one image is a sample in a convolutional network
 #     * Example: one audio file is a sample for a speech recognition model
-# * Batch: a set of N samples. The samples in a batch are processed independently, in parallel. If training, a batch results in only one update to the model.A batch generally approximates the distribution of the input data better than a single input. The larger the batch, the better the approximation; however, it is also true that the batch will take longer to process and will still result in only one update. For inference (evaluate/predict), it is recommended to pick a batch size that is as large as you can afford without going out of memory (since larger batches will usually result in faster evaluation/prediction).
-# * Epoch: an arbitrary cutoff, generally defined as "one pass over the entire dataset", used to separate training into distinct phases, which is useful for logging and periodic evaluation.
-# * When using validation_data or validation_split with the fit method of Keras models, evaluation will be run at the end of every epoch.
-# * Within Keras, there is the ability to add callbacks specifically designed to be run at the end of an epoch. Examples of these are learning rate changes and model checkpointing (saving).
-
-# In[25]:
-
-
+# * Batch: a set of N samples. The samples in a batch are processed independently, in 
+# parallel. If training, a batch results in only one update to the model.A batch generally
+# approximates the distribution of the input data better than a single input. The larger 
+# the batch, the better the approximation; however, it is also true that the batch will 
+# take longer to process and will still result in only one update. For inference 
+# (evaluate/predict), it is recommended to pick a batch size that is as large as 
+# you can afford without going out of memory (since larger batches will usually 
+# result in faster evaluation/prediction).
+# * Epoch: an arbitrary cutoff, generally defined as "one pass over the entire dataset", 
+# used to separate training into distinct phases, which is useful for logging and 
+# periodic evaluation.
+# * When using validation_data or validation_split with the fit method of Keras models, 
+# evaluation will be run at the end of every epoch.
+# * Within Keras, there is the ability to add callbacks specifically designed to be 
+# run at the end of an epoch. Examples of these are learning rate changes and model 
+# checkpointing (saving).
 model.fit(X_train,y_train,epochs=250)
 
 
 # ## Evaluation
 # 
-# Let's evaluate our performance on our training set and our test set. We can compare these two performances to check for overfitting.
-
-# In[26]:
-
-
-model.history.history
-
-
-# In[27]:
-
-
+# Let's evaluate our performance on our training set and our test set. We can compare 
+# these two performances to check for overfitting.
+print(model.history.history)
 loss = model.history.history['loss']
-
-
-# In[28]:
-
 
 sns.lineplot(x=range(len(loss)),y=loss)
 plt.title("Training Loss per Epoch");
-
+plt.savefig(PATH + 'loss.png', dpi=300)
+plt.close()
 
 # ### Compare final evaluation (MSE) on training set and test set.
 # 
 # These should hopefully be fairly close to each other.
-
-# In[29]:
-
-
-model.metrics_names
-
-
-# In[30]:
-
-
+print(model.metrics_names)
 training_score = model.evaluate(X_train,y_train,verbose=0)
 test_score = model.evaluate(X_test,y_test,verbose=0)
-
-
-# In[31]:
-
-
-training_score
-
-
-# In[32]:
-
-
-test_score
-
+print(training_score)
+print(test_score)
 
 # ### Further Evaluations
-
-# In[33]:
-
-
 test_predictions = model.predict(X_test)
-
-
-# In[34]:
-
-
-test_predictions
-
-
-# In[35]:
-
+print(test_predictions)
 
 pred_df = pd.DataFrame(y_test,columns=['Test Y'])
-
-
-# In[36]:
-
-
-pred_df
-
-
-# In[37]:
-
-
+print(pred_df)
 test_predictions = pd.Series(test_predictions.reshape(300,))
-
-
-# In[38]:
-
-
-test_predictions
-
-
-# In[39]:
-
-
+print(test_predictions)
 pred_df = pd.concat([pred_df,test_predictions],axis=1)
-
-
-# In[40]:
-
-
 pred_df.columns = ['Test Y','Model Predictions']
-
-
-# In[41]:
-
-
-pred_df
-
+print(pred_df)
 
 # Let's compare to the real test labels!
-
-# In[42]:
-
-
 sns.scatterplot(x='Test Y',y='Model Predictions',data=pred_df)
-
-
-# In[43]:
-
+plt.savefig(PATH + 'preds.png', dpi=300)
+plt.close()
 
 pred_df['Error'] = pred_df['Test Y'] - pred_df['Model Predictions']
-
-
-# In[44]:
-
-
 sns.distplot(pred_df['Error'],bins=50)
-
-
-# In[45]:
-
+plt.savefig(PATH + 'error.png', dpi=300)
+plt.close()
 
 from sklearn.metrics import mean_absolute_error,mean_squared_error
-
-
-# In[46]:
-
-
-mean_absolute_error(pred_df['Test Y'],pred_df['Model Predictions'])
-
-
-# In[47]:
-
-
-mean_squared_error(pred_df['Test Y'],pred_df['Model Predictions'])
-
-
-# In[48]:
-
+print(mean_absolute_error(pred_df['Test Y'],pred_df['Model Predictions']))
+print(mean_squared_error(pred_df['Test Y'],pred_df['Model Predictions']))
 
 # Essentially the same thing, difference just due to precision
-test_score
-
-
-# In[49]:
-
-
+print(test_score)
 #RMSE
-test_score**0.5
-
+print(test_score**0.5)
 
 # # Predicting on brand new data
 # 
-# What if we just saw a brand new gemstone from the ground? What should we price it at? This is the **exact** same procedure as predicting on a new test data!
-
-# In[50]:
-
-
+# What if we just saw a brand new gemstone from the ground? What should we price it
+# at? This is the **exact** same procedure as predicting on a new test data!
 # [[Feature1, Feature2]]
 new_gem = [[998,1000]]
 
-
-# In[51]:
-
-
 # Don't forget to scale!
-scaler.transform(new_gem)
-
-
-# In[52]:
-
-
+print(scaler.transform(new_gem))
 new_gem = scaler.transform(new_gem)
-
-
-# In[53]:
-
-
-model.predict(new_gem)
-
+print(model.predict(new_gem))
 
 # ## Saving and Loading a Model
-
-# In[54]:
-
-
 from tensorflow.keras.models import load_model
-
-
-# In[55]:
-
-
 model.save('my_model.h5')  # creates a HDF5 file 'my_model.h5'
-
-
-# In[57]:
-
-
 later_model = load_model('my_model.h5')
-
-
-# In[58]:
-
-
 later_model.predict(new_gem)
-
