@@ -127,119 +127,47 @@
 #    - W.H. Wolberg, W.N. Street, and O.L. Mangasarian. Machine learning techniques
 #      to diagnose breast cancer from fine-needle aspirates. Cancer Letters 77 (1994) 
 #      163-171.
-
-# In[56]:
-
-
 import pandas as pd
 import numpy as np
-
-
-# In[57]:
-
-
+PATH = '/home/ec2-user/environment/udemy_courses/data_science_py/25_nn/figs/'
 df = pd.read_csv('../DATA/cancer_classification.csv')
-
-
-# In[58]:
-
-
-df.info()
-
-
-# In[59]:
-
-
-df.describe().transpose()
-
+print(df.info())
+print(df.describe().transpose())
 
 # ## EDA
-
-# In[60]:
-
-
 import seaborn as sns
 import matplotlib.pyplot as plt
-
-
-# In[62]:
-
-
 sns.countplot(x='benign_0__mal_1',data=df)
-
-
-# In[63]:
-
+plt.savefig(PATH + 'benign.png', dpi=300)
+plt.close()
 
 sns.heatmap(df.corr())
+plt.savefig(PATH + 'corr.png', dpi=300)
+plt.close()
 
-
-# In[66]:
-
-
-df.corr()['benign_0__mal_1'].sort_values()
-
-
-# In[68]:
-
+print(df.corr()['benign_0__mal_1'].sort_values())
 
 df.corr()['benign_0__mal_1'].sort_values().plot(kind='bar')
-
-
-# In[70]:
-
+plt.savefig(PATH + 'benign_bar.png', dpi=300)
+plt.close()
 
 df.corr()['benign_0__mal_1'][:-1].sort_values().plot(kind='bar')
-
+plt.savefig(PATH + 'reverse_bar.png', dpi=300)
+plt.close()
 
 # ## Train Test Split
-
-# In[73]:
-
-
 X = df.drop('benign_0__mal_1',axis=1).values
 y = df['benign_0__mal_1'].values
-
-
-# In[74]:
-
-
 from sklearn.model_selection import train_test_split
-
-
-# In[76]:
-
-
 X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.25,random_state=101)
-
 
 # 
 # ## Scaling Data
-
-# In[77]:
-
-
 from sklearn.preprocessing import MinMaxScaler
-
-
-# In[78]:
-
-
 scaler = MinMaxScaler()
-
-
-# In[79]:
-
-
 scaler.fit(X_train)
-
-
-# In[80]:
-
-
 X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
-
 
 # ## Creating the Model
 # 
@@ -249,100 +177,48 @@ X_test = scaler.transform(X_test)
 #                   metrics=['accuracy'])
 #                   
 #     
-
-# In[98]:
-
-
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Activation,Dropout
-
-
-# In[99]:
-
-
-X_train.shape
-
-
-# In[111]:
-
+print(X_train.shape)
 
 model = Sequential()
-
 # https://stats.stackexchange.com/questions/181/how-to-choose-the-number-of-hidden-layers-and-nodes-in-a-feedforward-neural-netw
-
 model.add(Dense(units=30,activation='relu'))
-
 model.add(Dense(units=15,activation='relu'))
-
-
 model.add(Dense(units=1,activation='sigmoid'))
 
 # For a binary classification problem
 model.compile(loss='binary_crossentropy', optimizer='adam')
 
-
 # ## Training the Model 
 # 
 # ### Example One: Choosing too many epochs and overfitting!
-
-# In[112]:
-
-
 # https://stats.stackexchange.com/questions/164876/tradeoff-batch-size-vs-number-of-iterations-to-train-a-neural-network
 # https://datascience.stackexchange.com/questions/18414/are-there-any-rules-for-choosing-the-size-of-a-mini-batch
-
 model.fit(x=X_train, 
           y=y_train, 
           epochs=600,
           validation_data=(X_test, y_test), verbose=1
           )
-
-
-# In[113]:
-
-
 # model.history.history
-
-
-# In[114]:
-
-
 model_loss = pd.DataFrame(model.history.history)
-
-
-# In[115]:
-
-
 # model_loss
-
-
-# In[116]:
-
-
 model_loss.plot()
-
+plt.savefig(PATH + 'model_loss.png', dpi=300)
+plt.close()
 
 # ## Example Two: Early Stopping
 # 
-# We obviously trained too much! Let's use early stopping to track the val_loss and stop training once it begins increasing too much!
-
-# In[117]:
-
-
+# We obviously trained too much! Let's use early stopping to track the val_loss and 
+# stop training once it begins increasing too much!
 model = Sequential()
 model.add(Dense(units=30,activation='relu'))
 model.add(Dense(units=15,activation='relu'))
 model.add(Dense(units=1,activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam')
 
-
-# In[119]:
-
-
 from tensorflow.keras.callbacks import EarlyStopping
-
-
 # Stop training when a monitored quantity has stopped improving.
 # 
 #     Arguments:
@@ -361,15 +237,7 @@ from tensorflow.keras.callbacks import EarlyStopping
 #             monitored has stopped increasing; in `auto`
 #             mode, the direction is automatically inferred
 #             from the name of the monitored quantity.
-
-# In[121]:
-
-
 early_stop = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=25)
-
-
-# In[122]:
-
 
 model.fit(x=X_train, 
           y=y_train, 
@@ -377,26 +245,13 @@ model.fit(x=X_train,
           validation_data=(X_test, y_test), verbose=1,
           callbacks=[early_stop]
           )
-
-
-# In[124]:
-
-
 model_loss = pd.DataFrame(model.history.history)
 model_loss.plot()
-
+plt.savefig(PATH + 'model_loss_history.png', dpi=300)
+plt.close()
 
 # ## Example Three: Adding in DropOut Layers
-
-# In[125]:
-
-
 from tensorflow.keras.layers import Dropout
-
-
-# In[126]:
-
-
 model = Sequential()
 model.add(Dense(units=30,activation='relu'))
 model.add(Dropout(0.5))
@@ -407,48 +262,21 @@ model.add(Dropout(0.5))
 model.add(Dense(units=1,activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam')
 
-
-# In[127]:
-
-
 model.fit(x=X_train, 
           y=y_train, 
           epochs=600,
           validation_data=(X_test, y_test), verbose=1,
           callbacks=[early_stop]
           )
-
-
-# In[128]:
-
-
 model_loss = pd.DataFrame(model.history.history)
 model_loss.plot()
-
+plt.savefig(PATH + 'model_loss_drop_out_layer.png', dpi=300)
+plt.close()
 
 # # Model Evaluation
-
-# In[129]:
-
-
 predictions = model.predict_classes(X_test)
-
-
-# In[130]:
-
-
 from sklearn.metrics import classification_report,confusion_matrix
-
-
-# In[131]:
-
-
 # https://en.wikipedia.org/wiki/Precision_and_recall
 print(classification_report(y_test,predictions))
-
-
-# In[133]:
-
-
 print(confusion_matrix(y_test,predictions))
 

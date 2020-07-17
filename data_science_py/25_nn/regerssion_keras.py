@@ -215,5 +215,5 @@ single_house = df.drop('price',axis=1).iloc[0]
 single_house = scaler.transform(single_house.values.reshape(-1, 19))
 print(single_house)
 
-model.predict(single_house)
+print(model.predict(single_house))
 print(df.iloc[0])

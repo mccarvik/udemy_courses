@@ -10,7 +10,9 @@
 # ---
 # ---
 # 
-# **NOTE: You must watch the corresponding video to understand this lecture. This notebook can't serve as a full guide. Please watch the video BEFORE posting questions to the QA forum.**
+# **NOTE: You must watch the corresponding video to understand this lecture.
+# This notebook can't serve as a full guide. Please watch the video BEFORE posting 
+# questions to the QA forum.**
 # 
 # ---
 # ---
@@ -20,96 +22,32 @@
 # Full official tutorial available here: https://www.tensorflow.org/tensorboard/get_started
 # 
 # ## Data
-
-# In[1]:
-
-
 import pandas as pd
 import numpy as np
-
-
-# In[2]:
-
-
+PATH = '/home/ec2-user/environment/udemy_courses/data_science_py/25_nn/figs/'
 df = pd.read_csv('../DATA/cancer_classification.csv')
 
-
 # ### Train Test Split
-
-# In[3]:
-
-
 X = df.drop('benign_0__mal_1',axis=1).values
 y = df['benign_0__mal_1'].values
-
-
-# In[4]:
-
-
 from sklearn.model_selection import train_test_split
-
-
-# In[5]:
-
-
 X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.25,random_state=101)
-
 
 # 
 # ### Scaling Data
-
-# In[6]:
-
-
 from sklearn.preprocessing import MinMaxScaler
-
-
-# In[7]:
-
-
 scaler = MinMaxScaler()
-
-
-# In[8]:
-
-
 scaler.fit(X_train)
-
-
-# In[9]:
-
-
 X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
 
-
 # ## Creating the Model
-
-# In[10]:
-
-
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Activation,Dropout
-
-
-# In[11]:
-
-
 from tensorflow.keras.callbacks import EarlyStopping,TensorBoard
-
-
-# In[12]:
-
-
 early_stop = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=25)
-
-
-# In[13]:
-
-
-pwd
-
+print(pwd)
 
 # ## Creating the Tensorboard Callback
 # 
@@ -154,32 +92,15 @@ pwd
 #         embeddings_freq: frequency (in epochs) at which embedding layers will
 #           be visualized. If set to 0, embeddings won't be visualized.
 #        
-
-# In[14]:
-
-
 from datetime import datetime
-
-
-# In[15]:
-
-
-datetime.now().strftime("%Y-%m-%d--%H%M")
-
-
-# In[16]:
-
-
+print(datetime.now().strftime("%Y-%m-%d--%H%M"))
 # WINDOWS: Use "logs\\fit"
 # MACOS/LINUX: Use "logs\fit"
-
 log_directory = 'logs\\fit'
 
 # OPTIONAL: ADD A TIMESTAMP FOR UNIQUE FOLDER
 # timestamp = datetime.now().strftime("%Y-%m-%d--%H%M")
 # log_directory = log_directory + '\\' + timestamp
-
-
 board = TensorBoard(log_dir=log_directory,histogram_freq=1,
     write_graph=True,
     write_images=True,
@@ -187,12 +108,7 @@ board = TensorBoard(log_dir=log_directory,histogram_freq=1,
     profile_batch=2,
     embeddings_freq=1)
 
-
 # Now create the model layers:
-
-# In[17]:
-
-
 model = Sequential()
 model.add(Dense(units=30,activation='relu'))
 model.add(Dropout(0.5))
@@ -201,12 +117,7 @@ model.add(Dropout(0.5))
 model.add(Dense(units=1,activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam')
 
-
 # ## Train the Model
-
-# In[18]:
-
-
 model.fit(x=X_train, 
           y=y_train, 
           epochs=600,
@@ -214,34 +125,19 @@ model.fit(x=X_train,
           callbacks=[early_stop,board]
           )
 
-
 # # Running Tensorboard
 # 
 
 # ## Running through the Command Line
 # 
 # **Watch video to see how to run Tensorboard through a command line call.**
-
 # Tensorboard will run locally in your browser at [http://localhost:6006/](http://localhost:6006/)
 # 
-
-# In[19]:
-
-
 print(log_directory)
+print(pwd)
 
-
-# In[20]:
-
-
-pwd
-
-
-# ### Use cd at your command line to change directory to the file path reported back by pwd or your current .py file location.
+# ### Use cd at your command line to change directory to the file path reported back 
+# by pwd or your current .py file location.
 # ### Then run this code at your command line or terminal
-
-# In[ ]:
-
-
 tensorboard --logdir logs\fit 
 

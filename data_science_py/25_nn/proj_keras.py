@@ -9,15 +9,25 @@
 # 
 # ## The Data
 # 
-# We will be using a subset of the LendingClub DataSet obtained from Kaggle: https://www.kaggle.com/wordsforthewise/lending-club
+# We will be using a subset of the LendingClub DataSet obtained from Kaggle:
+# https://www.kaggle.com/wordsforthewise/lending-club
 # 
-# ## NOTE: Do not download the full zip from the link! We provide a special version of this file that has some extra feature engineering for you to do. You won't be able to follow along with the original file!
+# ## NOTE: Do not download the full zip from the link! We provide a special version 
+# of this file that has some extra feature engineering for you to do. You won't be 
+# able to follow along with the original file!
 # 
-# LendingClub is a US peer-to-peer lending company, headquartered in San Francisco, California.[3] It was the first peer-to-peer lender to register its offerings as securities with the Securities and Exchange Commission (SEC), and to offer loan trading on a secondary market. LendingClub is the world's largest peer-to-peer lending platform.
+# LendingClub is a US peer-to-peer lending company, headquartered in San Francisco,
+# California.[3] It was the first peer-to-peer lender to register its offerings as 
+# securities with the Securities and Exchange Commission (SEC), and to offer loan 
+# trading on a secondary market. LendingClub is the world's largest peer-to-peer lending platform.
 # 
 # ### Our Goal
 # 
-# Given historical data on loans given out with information on whether or not the borrower defaulted (charge-off), can we build a model thatcan predict wether or nor a borrower will pay back their loan? This way in the future when we get a new potential customer we can assess whether or not they are likely to pay back the loan. Keep in mind classification metrics when evaluating the performance of your model!
+# Given historical data on loans given out with information on whether or not the
+# borrower defaulted (charge-off), can we build a model thatcan predict wether or 
+# nor a borrower will pay back their loan? This way in the future when we get a new 
+# potential customer we can assess whether or not they are likely to pay back the 
+# loan. Keep in mind classification metrics when evaluating the performance of your model!
 # 
 # The "loan_status" column contains our label.
 # 
@@ -39,7 +49,8 @@
 #     <tr>
 #       <th>0</th>
 #       <td>loan_amnt</td>
-#       <td>The listed amount of the loan applied for by the borrower. If at some point in time, the credit department reduces the loan amount, then it will be reflected in this value.</td>
+#       <td>The listed amount of the loan applied for by the borrower. If at some 
+#           point in time, the credit department reduces the loan amount, then it will be reflected in this value.</td>
 #     </tr>
 #     <tr>
 #       <th>1</th>
@@ -74,12 +85,14 @@
 #     <tr>
 #       <th>7</th>
 #       <td>emp_length</td>
-#       <td>Employment length in years. Possible values are between 0 and 10 where 0 means less than one year and 10 means ten or more years.</td>
+#       <td>Employment length in years. Possible values are between 0 and 10 where 
+#           0 means less than one year and 10 means ten or more years.</td>
 #     </tr>
 #     <tr>
 #       <th>8</th>
 #       <td>home_ownership</td>
-#       <td>The home ownership status provided by the borrower during registration or obtained from the credit report. Our values are: RENT, OWN, MORTGAGE, OTHER</td>
+#       <td>The home ownership status provided by the borrower during registration or
+#           obtained from the credit report. Our values are: RENT, OWN, MORTGAGE, OTHER</td>
 #     </tr>
 #     <tr>
 #       <th>9</th>
@@ -124,7 +137,9 @@
 #     <tr>
 #       <th>17</th>
 #       <td>dti</td>
-#       <td>A ratio calculated using the borrower’s total monthly debt payments on the total debt obligations, excluding mortgage and the requested LC loan, divided by the borrower’s self-reported monthly income.</td>
+#       <td>A ratio calculated using the borrower’s total monthly debt payments
+#           on the total debt obligations, excluding mortgage and the requested LC loan, 
+#           divided by the borrower’s self-reported monthly income.</td>
 #     </tr>
 #     <tr>
 #       <th>18</th>
@@ -149,7 +164,8 @@
 #     <tr>
 #       <th>22</th>
 #       <td>revol_util</td>
-#       <td>Revolving line utilization rate, or the amount of credit the borrower is using relative to all available revolving credit.</td>
+#       <td>Revolving line utilization rate, or the amount of credit the borrower 
+#           is using relative to all available revolving credit.</td>
 #     </tr>
 #     <tr>
 #       <th>23</th>
@@ -164,7 +180,8 @@
 #     <tr>
 #       <th>25</th>
 #       <td>application_type</td>
-#       <td>Indicates whether the loan is an individual application or a joint application with two co-borrowers</td>
+#       <td>Indicates whether the loan is an individual application or a joint 
+#           application with two co-borrowers</td>
 #     </tr>
 #     <tr>
 #       <th>26</th>
@@ -184,64 +201,27 @@
 
 # ## Starter Code
 # 
-# #### Note: We also provide feature information on the data as a .csv file for easy lookup throughout the notebook:
-
-# In[1]:
-
-
+# #### Note: We also provide feature information on the data as a .csv file for 
+#           easy lookup throughout the notebook:
 import pandas as pd
-
-
-# In[2]:
-
-
+PATH = '/home/ec2-user/environment/udemy_courses/data_science_py/25_nn/figs/'
 data_info = pd.read_csv('../DATA/lending_club_info.csv',index_col='LoanStatNew')
-
-
-# In[3]:
-
-
 print(data_info.loc['revol_util']['Description'])
-
-
-# In[4]:
-
 
 def feat_info(col_name):
     print(data_info.loc[col_name]['Description'])
 
-
-# In[5]:
-
-
-feat_info('mort_acc')
-
+print(feat_info('mort_acc'))
 
 # ## Loading the data and other imports
-
-# In[6]:
-
-
-import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
 # might be needed depending on your version of Jupyter
-get_ipython().run_line_magic('matplotlib', 'inline')
-
-
-# In[7]:
-
-
+# get_ipython().run_line_magic('matplotlib', 'inline')
 df = pd.read_csv('../DATA/lending_club_loan_two.csv')
-
-
-# In[8]:
-
-
-df.info()
-
+print(df.info())
 
 # # Project Tasks
 # 
